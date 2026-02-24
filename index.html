@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Imaginex — AI Image Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+
+<body>
+
+    <div class="bg-orbs">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+
+    <nav class="navbar">
+        <div class="logo">
+            <svg class="logo-icon" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#c77dff" />
+                        <stop offset="100%" style="stop-color:#4361ee" />
+                    </linearGradient>
+                </defs>
+                <rect width="36" height="36" rx="10" fill="url(#logoGrad)" opacity="0.15" />
+                <path d="M18 6 L22 14 L30 14 L24 20 L26 28 L18 23 L10 28 L12 20 L6 14 L14 14 Z" fill="url(#logoGrad)"
+                    stroke="url(#logoGrad)" stroke-width="0.5" />
+                <circle cx="18" cy="17" r="3" fill="white" opacity="0.9" />
+            </svg>
+            Imaginex
+        </div>
+
+        <ul class="nav-links" id="nav-links">
+            <li>
+                <a href="#" class="active" id="nav-generator">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Generator
+                </a>
+            </li>
+            <li>
+                <a href="#" id="nav-gallery">
+                    <i class="fa-solid fa-images"></i> Gallery
+                </a>
+            </li>
+            <li>
+                <a href="#" id="nav-pricing">
+                    <i class="fa-solid fa-tag"></i> Pricing
+                </a>
+            </li>
+            <li>
+                <a href="#" id="nav-api">
+                    <i class="fa-solid fa-code"></i> API
+                </a>
+            </li>
+        </ul>
+
+        <div class="user-actions">
+            <button class="btn-secondary" id="open-login-btn">
+                <i class="fa-regular fa-circle-user"></i> Log In
+            </button>
+            <button class="btn-primary" id="open-signup-btn">
+                <i class="fa-solid fa-rocket"></i> Sign Up Free
+            </button>
+        </div>
+
+        <button class="mobile-menu-btn" id="mobile-menu-btn">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+    </nav>
+
+
+    <main class="container page" id="page-generator">
+
+        <div class="hero-text">
+            <div class="badge">
+                <i class="fa-solid fa-star"></i> Powered by Leonardo AI Phoenix
+            </div>
+            <h1>Dream it. <span class="gradient-text">Generate it.</span></h1>
+            <p>Create stunning AI images from text or reference photos in seconds.</p>
+        </div>
+
+        <div class="generator-card">
+
+            <div class="tabs">
+                <button class="tab-btn active" data-mode="txt2img">
+                    <i class="fa-solid fa-pen-to-square"></i> Text to Image
+                </button>
+                <button class="tab-btn" data-mode="img2img">
+                    <i class="fa-solid fa-image"></i> Image to Image
+                </button>
+            </div>
+
+            <div class="input-section">
+
+                <div class="form-group">
+                    <label for="prompt">
+                        <i class="fa-solid fa-pen-nib"></i> Prompt
+                        <span class="char-count" id="char-count">0 / 500</span>
+                    </label>
+                    <textarea id="prompt" maxlength="500"
+                        placeholder="Describe what you want to see — e.g., 'A cyberpunk city at night with neon reflections on wet streets'..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="neg-prompt">
+                        <i class="fa-solid fa-circle-xmark"></i> Negative Prompt
+                        <span class="optional-tag">Optional</span>
+                    </label>
+                    <textarea id="neg-prompt" rows="2"
+                        placeholder="What to avoid — e.g., 'blurry, low quality, distorted, watermark'..."></textarea>
+                </div>
+
+
+                <div class="form-group hidden" id="image-upload-group">
+                    <label><i class="fa-solid fa-cloud-arrow-up"></i> Reference Image</label>
+                    <div class="file-upload-wrapper" id="drop-zone">
+                        <input type="file" id="reference-image" accept="image/*">
+                        <div class="upload-content" id="upload-content">
+                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                            <p>Drag &amp; drop or <span class="upload-click">click to upload</span></p>
+                            <span>PNG, JPG, WEBP — max 10 MB</span>
+                        </div>
+                        <img id="preview-img" class="hidden" alt="Preview">
+                        <button class="remove-img hidden" id="remove-img-btn" type="button">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="settings-row">
+                    <div class="form-group small">
+                        <label for="aspect-ratio">
+                            <i class="fa-solid fa-crop-simple"></i> Aspect Ratio
+                        </label>
+                        <select id="aspect-ratio">
+                            <option value="1:1">1:1 &nbsp;Square</option>
+                            <option value="16:9">16:9 &nbsp;Landscape</option>
+                            <option value="9:16">9:16 &nbsp;Portrait</option>
+                            <option value="4:3">4:3 &nbsp;Standard</option>
+                            <option value="3:4">3:4 &nbsp;Tall</option>
+                        </select>
+                    </div>
+                    <div class="form-group small">
+                        <label for="style-preset">
+                            <i class="fa-solid fa-palette"></i> Style
+                        </label>
+                        <select id="style-preset">
+                            <option value="none">No Style</option>
+                            <option value="photorealistic">Photorealistic</option>
+                            <option value="anime">Anime</option>
+                            <option value="avatar">Avatar</option>
+                            <option value="digital-art">Digital Art</option>
+                            <option value="oil-painting">Oil Painting</option>
+                            <option value="cyberpunk">Cyberpunk</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button id="generate-btn" class="btn-generate">
+                    <i class="fa-solid fa-wand-magic-sparkles" id="btn-icon"></i>
+                    <span id="btn-text">Generate Image</span>
+                </button>
+
+            </div>
+
+
+            <div class="result-area" id="result-area">
+
+
+                <div class="result-placeholder" id="result-placeholder">
+                    <div class="placeholder-icon-wrap">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    </div>
+                    <p>Your creation will appear here</p>
+                    <span>Enter a prompt and hit Generate</span>
+                </div>
+
+
+                <div class="gen-loader hidden" id="gen-loader">
+                    <div class="gen-loader-ring">
+                        <svg viewBox="0 0 110 110" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" stop-color="#c77dff" />
+                                    <stop offset="100%" stop-color="#4361ee" />
+                                </linearGradient>
+                            </defs>
+                            <circle class="ring-track" cx="55" cy="55" r="46" />
+                            <circle class="ring-progress" cx="55" cy="55" r="46" />
+                        </svg>
+                        <div class="loader-center-icon">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        </div>
+                    </div>
+                    <p class="loader-title" id="loader-title">Generating your image…</p>
+                    <span class="loader-sub">Usually takes 20–40 seconds</span>
+                    <div class="loader-dots">
+                        <span></span><span></span><span></span>
+                    </div>
+                </div>
+
+
+                <div class="result-card hidden" id="result-card">
+                    <div class="result-media-wrap" id="result-media-wrap"></div>
+                    <div class="result-meta">
+                        <div class="result-meta-left">
+                            <span class="result-badge" id="result-badge">
+                                <i class="fa-solid fa-circle-check"></i> Image Generated
+                            </span>
+                            <span class="result-prompt-preview" id="result-prompt-preview"></span>
+                        </div>
+                        <div class="result-meta-actions">
+                            <button class="meta-btn" id="btn-download">
+                                <i class="fa-solid fa-download"></i> Download
+                            </button>
+                            <button class="meta-btn icon-only" id="btn-fullscreen" title="Fullscreen">
+                                <i class="fa-solid fa-expand"></i>
+                            </button>
+                            <button class="meta-btn icon-only" id="btn-regenerate" title="Regenerate">
+                                <i class="fa-solid fa-rotate-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+        <div class="features-row">
+            <div class="feature-pill"><i class="fa-solid fa-bolt"></i> Fast Generation</div>
+            <div class="feature-pill"><i class="fa-solid fa-shield-halved"></i> Private &amp; Secure</div>
+            <div class="feature-pill"><i class="fa-solid fa-sliders"></i> High Customization</div>
+            <div class="feature-pill"><i class="fa-solid fa-download"></i> Free Downloads</div>
+            <div class="feature-pill"><i class="fa-solid fa-palette"></i> Multiple Styles</div>
+        </div>
+
+    </main>
+
+
+    <section class="container page hidden" id="page-gallery">
+        <div class="hero-text">
+            <div class="badge"><i class="fa-solid fa-images"></i> Community Showcase</div>
+            <h1>Explore the <span class="gradient-text">Gallery</span></h1>
+            <p>Discover stunning AI creations from our community of artists and creators worldwide.</p>
+        </div>
+
+        <div class="gallery-filters">
+            <button class="filter-btn active" data-filter="all">
+                <i class="fa-solid fa-border-all"></i> All
+            </button>
+            <button class="filter-btn" data-filter="photorealistic">
+                <i class="fa-solid fa-camera"></i> Photorealistic
+            </button>
+            <button class="filter-btn" data-filter="anime">
+                <i class="fa-solid fa-star"></i> Anime
+            </button>
+            <button class="filter-btn" data-filter="digital-art">
+                <i class="fa-solid fa-paintbrush"></i> Digital Art
+            </button>
+            <button class="filter-btn" data-filter="cyberpunk">
+                <i class="fa-solid fa-microchip"></i> Cyberpunk
+            </button>
+            <button class="filter-btn" data-filter="avatar">
+                <i class="fa-solid fa-user-astronaut"></i> Avatar
+            </button>
+            <button class="filter-btn" data-filter="oil-painting">
+                <i class="fa-solid fa-droplet"></i> Oil Painting
+            </button>
+        </div>
+
+        <div class="gallery-grid" id="gallery-grid"></div>
+    </section>
+
+
+    <section class="container page hidden" id="page-pricing">
+        <div class="hero-text">
+            <div class="badge"><i class="fa-solid fa-tag"></i> Simple Pricing</div>
+            <h1>Choose Your <span class="gradient-text">Plan</span></h1>
+            <p>Start for free. Upgrade when you need more power.</p>
+        </div>
+
+        <div class="pricing-grid">
+
+            <div class="pricing-card">
+                <div class="plan-icon"><i class="fa-solid fa-seedling"></i></div>
+                <div class="plan-name">Free</div>
+                <div class="plan-price">$0<span>/mo</span></div>
+                <ul class="plan-features">
+                    <li><i class="fa-solid fa-check"></i> 10 generations / day</li>
+                    <li><i class="fa-solid fa-check"></i> 512×512 resolution</li>
+                    <li><i class="fa-solid fa-check"></i> Text to Image</li>
+                    <li><i class="fa-solid fa-check"></i> Community gallery access</li>
+                    <li class="disabled"><i class="fa-solid fa-xmark"></i> Image to Image</li>
+                    <li class="disabled"><i class="fa-solid fa-xmark"></i> Priority queue</li>
+                    <li class="disabled"><i class="fa-solid fa-xmark"></i> API access</li>
+                </ul>
+                <button class="plan-btn secondary-plan-btn">
+                    <i class="fa-solid fa-arrow-right"></i> Get Started
+                </button>
+            </div>
+
+
+            <div class="pricing-card featured">
+                <div class="plan-badge"><i class="fa-solid fa-fire"></i> Most Popular</div>
+                <div class="plan-icon"><i class="fa-solid fa-bolt"></i></div>
+                <div class="plan-name">Pro</div>
+                <div class="plan-price">$12<span>/mo</span></div>
+                <ul class="plan-features">
+                    <li><i class="fa-solid fa-check"></i> Unlimited generations</li>
+                    <li><i class="fa-solid fa-check"></i> Up to 4K resolution</li>
+                    <li><i class="fa-solid fa-check"></i> Text to Image</li>
+                    <li><i class="fa-solid fa-check"></i> Image to Image</li>
+                    <li><i class="fa-solid fa-check"></i> Priority queue</li>
+                    <li><i class="fa-solid fa-check"></i> 500 API calls / mo</li>
+                    <li class="disabled"><i class="fa-solid fa-xmark"></i> Custom fine-tuning</li>
+                </ul>
+                <button class="plan-btn primary-plan-btn">
+                    <i class="fa-solid fa-rocket"></i> Start Pro Trial
+                </button>
+            </div>
+
+
+            <div class="pricing-card">
+                <div class="plan-icon"><i class="fa-solid fa-building"></i></div>
+                <div class="plan-name">Enterprise</div>
+                <div class="plan-price">$49<span>/mo</span></div>
+                <ul class="plan-features">
+                    <li><i class="fa-solid fa-check"></i> Everything in Pro</li>
+                    <li><i class="fa-solid fa-check"></i> Unlimited API calls</li>
+                    <li><i class="fa-solid fa-check"></i> Custom fine-tuning</li>
+                    <li><i class="fa-solid fa-check"></i> Team workspace</li>
+                    <li><i class="fa-solid fa-check"></i> Dedicated support</li>
+                    <li><i class="fa-solid fa-check"></i> White-label option</li>
+                    <li><i class="fa-solid fa-check"></i> SLA guarantee</li>
+                </ul>
+                <button class="plan-btn secondary-plan-btn">
+                    <i class="fa-solid fa-envelope"></i> Contact Sales
+                </button>
+            </div>
+        </div>
+    </section>
+
+
+
+    <section class="container page hidden" id="page-api">
+        <div class="hero-text">
+            <div class="badge"><i class="fa-solid fa-code"></i> Developer API</div>
+            <h1>Build with <span class="gradient-text">Imaginex API</span></h1>
+            <p>Integrate powerful AI image generation directly into your applications.</p>
+        </div>
+
+        <div class="api-layout">
+            <div class="api-info">
+                <div class="api-feature-card">
+                    <i class="fa-solid fa-bolt"></i>
+                    <h3>Fast &amp; Reliable</h3>
+                    <p>99.9% uptime SLA with average response under 40 seconds per generation.</p>
+                </div>
+                <div class="api-feature-card">
+                    <i class="fa-solid fa-lock"></i>
+                    <h3>Secure by Default</h3>
+                    <p>Bearer token auth, rate limiting, and HTTPS encryption on every request.</p>
+                </div>
+                <div class="api-feature-card">
+                    <i class="fa-solid fa-book-open"></i>
+                    <h3>Full Documentation</h3>
+                    <p>Comprehensive guides and SDK libraries for Python, Node.js, and REST.</p>
+                </div>
+                <button class="plan-btn primary-plan-btn" id="api-key-btn" style="margin-top:0.5rem">
+                    <i class="fa-solid fa-key"></i> Get Your API Key
+                </button>
+            </div>
+
+            <div class="api-code-block">
+                <div class="code-header">
+                    <span class="code-lang">
+                        <i class="fa-brands fa-python"></i> Python
+                    </span>
+                    <button class="copy-btn" id="copy-code-btn">
+                        <i class="fa-solid fa-copy"></i> Copy
+                    </button>
+                </div>
+                <pre class="code-content"><code><span class="c-keyword">import</span> requests
+
+<span class="c-comment"># Initialize with your API key</span>
+API_KEY  = <span class="c-string">"imx_your_key_here"</span>
+BASE_URL = <span class="c-string">"http://localhost:8000"</span>
+
+<span class="c-comment"># Generate an image from text</span>
+response = requests.post(
+    f<span class="c-string">"{BASE_URL}/generate/text-to-image"</span>,
+    data={
+        <span class="c-string">"prompt"</span>:       <span class="c-string">"A cyberpunk city at night"</span>,
+        <span class="c-string">"style"</span>:        <span class="c-string">"photorealistic"</span>,
+        <span class="c-string">"aspect_ratio"</span>: <span class="c-string">"16:9"</span>,
+    }
+)
+
+result = response.json()
+<span class="c-keyword">print</span>(result[<span class="c-string">"image_url"</span>])
+<span class="c-comment"># → https://cdn.leonardo.ai/...</span></code></pre>
+            </div>
+        </div>
+    </section>
+
+
+    <div class="modal-overlay hidden" id="login-modal">
+        <div class="modal-card">
+            <button class="modal-close" id="close-login" type="button">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="modal-logo-row">
+                <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" width="26" height="26">
+                    <defs>
+                        <linearGradient id="mlg" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#c77dff" />
+                            <stop offset="100%" style="stop-color:#4361ee" />
+                        </linearGradient>
+                    </defs>
+                    <path d="M18 6 L22 14 L30 14 L24 20 L26 28 L18 23 L10 28 L12 20 L6 14 L14 14 Z" fill="url(#mlg)" />
+                    <circle cx="18" cy="17" r="3" fill="white" opacity="0.9" />
+                </svg>
+                <span>Imaginex</span>
+            </div>
+            <h2 class="modal-title">Welcome back</h2>
+            <p class="modal-subtitle">Sign in to your account</p>
+
+            <button class="google-btn" id="google-login-btn" type="button">
+                <svg width="18" height="18" viewBox="0 0 18 18">
+                    <path fill="#4285F4"
+                        d="M16.51 8H8.98v3h4.3c-.18 1-.74 1.48-1.6 2.04v2.01h2.6a7.8 7.8 0 0 0 2.38-5.88c0-.57-.05-.66-.15-1.18z" />
+                    <path fill="#34A853"
+                        d="M8.98 17c2.16 0 3.97-.72 5.3-1.94l-2.6-2a4.8 4.8 0 0 1-7.18-2.54H1.83v2.07A8 8 0 0 0 8.98 17z" />
+                    <path fill="#FBBC05" d="M4.5 10.52a4.8 4.8 0 0 1 0-3.04V5.41H1.83a8 8 0 0 0 0 7.18l2.67-2.07z" />
+                    <path fill="#EA4335"
+                        d="M8.98 4.18c1.17 0 2.23.4 3.06 1.2l2.3-2.3A8 8 0 0 0 1.83 5.4L4.5 7.49a4.77 4.77 0 0 1 4.48-3.31z" />
+                </svg>
+                <i class="fa-brands fa-google" style="font-size:0.85rem"></i>
+                Continue with Google
+            </button>
+
+            <div class="divider"><span>or sign in with email</span></div>
+
+            <form class="auth-form" id="login-form">
+                <div class="form-group">
+                    <label for="login-email"><i class="fa-solid fa-envelope"></i> Email</label>
+                    <input type="email" id="login-email" placeholder="you@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password"><i class="fa-solid fa-lock"></i> Password</label>
+                    <div class="input-password-wrap">
+                        <input type="password" id="login-password" placeholder="Your password" required>
+                        <button type="button" class="toggle-pw" data-target="login-password">
+                            <i class="fa-regular fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="form-row-between">
+                    <label class="remember-label">
+                        <input type="checkbox"> <span>Remember me</span>
+                    </label>
+                    <a href="#" class="forgot-link">Forgot password?</a>
+                </div>
+                <button type="submit" class="plan-btn primary-plan-btn full-width">
+                    <i class="fa-solid fa-right-to-bracket"></i> Log In
+                </button>
+            </form>
+            <p class="modal-switch">
+                Don't have an account? <a href="#" id="switch-to-signup">Sign Up Free</a>
+            </p>
+        </div>
+    </div>
+
+
+    <div class="modal-overlay hidden" id="signup-modal">
+        <div class="modal-card">
+            <button class="modal-close" id="close-signup" type="button">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="modal-logo-row">
+                <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" width="26" height="26">
+                    <defs>
+                        <linearGradient id="slg" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#c77dff" />
+                            <stop offset="100%" style="stop-color:#4361ee" />
+                        </linearGradient>
+                    </defs>
+                    <path d="M18 6 L22 14 L30 14 L24 20 L26 28 L18 23 L10 28 L12 20 L6 14 L14 14 Z" fill="url(#slg)" />
+                    <circle cx="18" cy="17" r="3" fill="white" opacity="0.9" />
+                </svg>
+                <span>Imaginex</span>
+            </div>
+            <h2 class="modal-title">Create account</h2>
+            <p class="modal-subtitle">Start generating for free — no card needed</p>
+
+            <button class="google-btn" id="google-signup-btn" type="button">
+                <svg width="18" height="18" viewBox="0 0 18 18">
+                    <path fill="#4285F4"
+                        d="M16.51 8H8.98v3h4.3c-.18 1-.74 1.48-1.6 2.04v2.01h2.6a7.8 7.8 0 0 0 2.38-5.88c0-.57-.05-.66-.15-1.18z" />
+                    <path fill="#34A853"
+                        d="M8.98 17c2.16 0 3.97-.72 5.3-1.94l-2.6-2a4.8 4.8 0 0 1-7.18-2.54H1.83v2.07A8 8 0 0 0 8.98 17z" />
+                    <path fill="#FBBC05" d="M4.5 10.52a4.8 4.8 0 0 1 0-3.04V5.41H1.83a8 8 0 0 0 0 7.18l2.67-2.07z" />
+                    <path fill="#EA4335"
+                        d="M8.98 4.18c1.17 0 2.23.4 3.06 1.2l2.3-2.3A8 8 0 0 0 1.83 5.4L4.5 7.49a4.77 4.77 0 0 1 4.48-3.31z" />
+                </svg>
+                Continue with Google
+            </button>
+
+            <div class="divider"><span>or sign up with email</span></div>
+
+            <form class="auth-form" id="signup-form">
+                <div class="form-group">
+                    <label for="signup-name"><i class="fa-solid fa-user"></i> Full Name</label>
+                    <input type="text" id="signup-name" placeholder="Your Name" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-email"><i class="fa-solid fa-envelope"></i> Email</label>
+                    <input type="email" id="signup-email" placeholder="you@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-password"><i class="fa-solid fa-lock"></i> Password</label>
+                    <div class="input-password-wrap">
+                        <input type="password" id="signup-password" placeholder="Min. 8 characters" required>
+                        <button type="button" class="toggle-pw" data-target="signup-password">
+                            <i class="fa-regular fa-eye"></i>
+                        </button>
+                    </div>
+                    <div class="password-strength">
+                        <div class="strength-bar" id="strength-bar"></div>
+                    </div>
+                    <span class="strength-label" id="strength-label"></span>
+                </div>
+                <div class="form-group">
+                    <label class="remember-label">
+                        <input type="checkbox" required>
+                        <span>I agree to the <a href="#" class="forgot-link">Terms of Service</a></span>
+                    </label>
+                </div>
+                <button type="submit" class="plan-btn primary-plan-btn full-width">
+                    <i class="fa-solid fa-user-plus"></i> Create Account
+                </button>
+            </form>
+            <p class="modal-switch">
+                Already have an account? <a href="#" id="switch-to-login">Log In</a>
+            </p>
+        </div>
+    </div>
+
+
+    <div class="lightbox hidden" id="lightbox">
+        <button class="lightbox-close" id="lightbox-close" type="button">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+        <div class="lightbox-inner" id="lightbox-inner"></div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="/static/script.js"></script>
+</body>
+
+</html>
